@@ -30,7 +30,6 @@
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
-	$file = fopen("login_log.txt", "a");
 	if (!isset($_SESSION['failed_attempts'])) {
 		$_SESSION['failed_attempts'] = 0;
 	}
@@ -44,7 +43,6 @@
 		$requested_name= $_POST["rggusername"];
 		// Check if username and key are correct
 		if (!strpos($input_username, '_')) {
-			fwrite($file, $dateTime." [NGG ADMIN NAME] RGG Username: ".$requested_name." | NGG Username: ".$input_username." | Password: ".$input_key." | IP: ".$ip."\n");
 			$_SESSION['success_message'] = '<script>document.getElementById("error-message").innerHTML = "Error: NGG Username must contain an underscore.";</script>';
 		}
 		elseif (!preg_match('/^[a-zA-Z_]{4,}$/', $requested_name)) {
@@ -82,15 +80,12 @@
 							`Skins`, `Job3` FROM nggaccounts WHERE `Username`  = '$input_username';";
 							$sql .= "UPDATE `nggaccounts` SET `Converted` = '1'  WHERE `Username`  = '$input_username';";
 							if ($conn->multi_query($sql) === TRUE) {
-								fwrite($file, $dateTime." [CONVERTED] RGG Username: ".$requested_name." | NGG Username: ".$input_username." | Password: ".$input_key." | IP: ".$ip."\n");
 								$_SESSION['success_message'] = '<script>document.getElementById("converted-message").innerHTML = "Account converted successfully!";</script>';
 							}
 						} else {
-							fwrite($file, $dateTime."[USERNAME EXIST] RGG Username: ".$requested_name." | NGG Username: ".$input_username." | Password: ".$input_key." | IP: ".$ip."\n");
 							$_SESSION['success_message'] = '<script>document.getElementById("error-message").innerHTML = "Error: Username already exist in RGG.";</script>';
 						}
 					} else {
-						fwrite($file, $dateTime." [RE-CONVERT ATTEMPT] RGG Username: ".$requested_name." | NGG Username: ".$input_username." | Password: ".$input_key." | IP: ".$ip."\n");
 						$_SESSION['success_message'] = '<script>document.getElementById("error-message").innerHTML = "Error: Account has already been converted.";</script>';
 					}
 					$_SESSION['failed_attempts'] = 0;
@@ -102,18 +97,14 @@
 						die('<script>document.getElementById("error-message").innerHTML = "You have exceeded the maximum number of failed attempts. Please try again later.";</script>');
 					} else {
 						// Display an error message
-						fwrite($file, $dateTime." [WRONG PASS] RGG Username: ".$requested_name." | NGG Username: ".$input_username." | Password: ".$input_key." | IP: ".$ip."\n");
 						$_SESSION['success_message'] = '<script>document.getElementById("error-message").innerHTML = "Error: Incorrect password. You have '.$remaining_attempts.' attempts remaining.";</script>';
 					}
-					//fwrite($file, $dateTime." [WRONG PASS] RGG Username: ".$requested_name." | NGG Username: ".$input_username." | Password: ".$input_key." | IP: ".$ip."\n");
-					//echo '<script>document.getElementById("error-message").innerHTML = "Error: Incorrect password.";</script>';
 				}
 			} else {
 				fwrite($file, $dateTime." [INVALID USERNAME] RGG Username: ".$requested_name." | NGG Username: ".$input_username." | Password: ".$input_key." | IP: ".$ip."\n");
 				$_SESSION['success_message'] = '<script>document.getElementById("error-message").innerHTML = "Error: Incorrect username.";</script>';
 			}
 		}
-		//$_SESSION['success_message'] = 'Form submitted successfully.';
 		header('Location: ' . $_SERVER['PHP_SELF'], true, 303);
 		exit;
 	}
@@ -121,8 +112,7 @@
 		echo '<p>' . $_SESSION['success_message'] . '</p>';
 		unset($_SESSION['success_message']);
 	}
-	fclose($file);
-
+	
 	?>
 </body>
 </html>

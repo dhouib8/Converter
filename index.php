@@ -101,7 +101,6 @@
 					}
 				}
 			} else {
-				fwrite($file, $dateTime." [INVALID USERNAME] RGG Username: ".$requested_name." | NGG Username: ".$input_username." | Password: ".$input_key." | IP: ".$ip."\n");
 				$_SESSION['success_message'] = '<script>document.getElementById("error-message").innerHTML = "Error: Incorrect username.";</script>';
 			}
 		}
